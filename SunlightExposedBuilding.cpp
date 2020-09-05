@@ -137,70 +137,54 @@ int main()
     // // int n = 4;
     // Point V1[] =  {{4,0}, {4,-5}, {7,-5}, {7,0}, {4,0}};
     // Point V[] =  {{0.4,-2},{0.4,-5},{2.5,-5},{2.5,-2},{0.4,-2}};
-    Point V[2][5] =  {{{0.4,-2},{0.4,-5},{2.5,-5},{2.5,-2},{0.4,-2}},{{4,0}, {4,-5}, {7,-5}, {7,0}, {4,0}}};
+    Point V[][5] =  {{{0.4,-2},{0.4,-5},{2.5,-5},{2.5,-2},{0.4,-2}},{{4,0}, {4,-5}, {7,-5}, {7,0}, {4,0}}};
     int rows = sizeof(V)/sizeof(V[0]);
     int cols = sizeof(V[0])/sizeof(V[0][0]);
     // cout<<"rows:"<< rows << " cols"<< cols <<endl;
     float totaldist = 0;
     for (int l = 0;l < rows; l++)
     {   
+        // cout<<"l:"<< l << endl;
         int n = sizeof(V[l])/sizeof(V[l][0]);; 
         n = n-1;
         Point intersection;
-        if (l == 0)
+        auto [tan1VaL,tan2VaL] = tangent_PointPoly( P1, n, V[l] );
+        // cout << "tan1VaL:" << tan1VaL << "tan2VaL:" << tan2VaL << "l " << l << endl;
+        int jLoop = tan1VaL;
+        if (l > 0)
         {
-            auto [tan1VaL,tan2VaL] = tangent_PointPoly( P1, n, V[l] );
-            // cout << "tan1VaL:" << tan1VaL << "tan2VaL:" << tan2VaL << "l " << l << endl;
-
-            // for counterclockwise polygon
-            int j = 0;
-            int count = 0;
-            for (int i=tan2VaL;i<n;i++) {
-                j = i+1;
-                if (j == n) {
-                    j = 0;
-                }
-                if (j > tan1VaL) {
-                    break;
-                }
-                // cout << "i:" << i << "j:" << j << endl;
-                totaldist += getDist(V[l][i],V[l][j]);
-                i = j-1;
-                if (count > n+1)
-                {
-                    break;
-                }
-                count += 1;
-            }
-            // cout << "totaldist:" << totaldist << endl;
             bool valIntersection = areLineIntersecting  (P1 , V[l][tan2VaL], V[l+1][0], V[l+1][1]);
             // cout << "valIntersection:" << valIntersection << endl;
             if (valIntersection)
             {
-                intersection = getLineIntersection (P1 , V[l][tan2VaL], V[l+1][0], V[l+1][1]);
+                intersection = getLineIntersection (P1 , V[l-1][tan2VaL], V[l][0], V[l][1]);
                 // cout << "The intersection of the given lines is: "; 
-                // cout << "x:" << intersection.x << "y:" << intersection.y << endl;       
+                // cout << "x:" << intersection.x << " y:" << intersection.y << endl; 
+                jLoop = tan1VaL - 1;
+                totaldist += getDist(V[l][tan1VaL-1],intersection);
+                // cout << "totaldist:" << totaldist << endl;
             }
-        } else
-        {
-            auto [tan1VaL,tan2VaL] = tangent_PointPoly( P1, n, V[l] );
-            // cout << "tan1VaL:" << tan1VaL << "tan2VaL:" << tan2VaL << "l " << l << endl;
+        }
 
-            // for counterclockwise polygon
-            int k = 0;
-            for (int i=tan2VaL;i<n;i++) {
-                k = i+1;
-                if (k == n) {
-                    k = 0;
-                }
-                if (k > tan1VaL-1) {
-                    break;
-                }
-                // cout << "i:" << i << "k:" << k << endl;
-                totaldist += abs(getDist(V[l][i],V[l][k]));
-                i = k-1;
+        // for counterclockwise polygon
+        int j = 0;
+        int count = 0;
+        for (int i=tan2VaL;i<n;i++) {
+            j = i+1;
+            if (j == n) {
+                j = 0;
             }
-            totaldist += getDist(V[l][tan1VaL-1],intersection);
+            if (j > jLoop) {
+                break;
+            }
+            // cout << "i:" << i << "j:" << j << endl;
+            totaldist += getDist(V[l][i],V[l][j]);
+            i = j-1;
+            if (count > n+1)
+            {
+                break;
+            }
+            count += 1;
         }
     }
     cout << "totaldist:" << totaldist << endl;
