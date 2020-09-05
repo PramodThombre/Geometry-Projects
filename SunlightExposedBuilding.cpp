@@ -16,11 +16,6 @@ isLeft( Point P0, Point P1, Point P2 )
     return (P1.x - P0.x)*(P2.y - P0.y) - (P2.x - P0.x)*(P1.y - P0.y);
 }
 
-// tests for polygon vertex ordering relative to a fixed point P
-#define above(P,Vi,Vj)  (isLeft(P,Vi,Vj) > 0)   // true if Vi is above Vj
-#define below(P,Vi,Vj)  (isLeft(P,Vi,Vj) < 0)   // true if Vi is below Vj
-//===================================================================
-
 float
 getDist( Point P0, Point P1 )
 {
@@ -87,8 +82,7 @@ getLineIntersection( Point P0, Point P1, Point P2, Point P3 )
 //    Input:  P = a 2D point (exterior to the polygon)
 //            n = number of polygon vertices
 //            V = array of vertices for any 2D polygon with V[n]=V[0]
-//    Output: rtan = index of rightmost tangent point V[*rtan]
-//            ltan = index of leftmost tangent point V[*ltan]
+//            index of tangent points
 auto
 tangent_PointPoly( Point P, int n, Point V[] )
 {
